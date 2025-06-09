@@ -11,10 +11,11 @@ TIMER_FACTOR = 5
 
 
 # DBPR
-PACKET_SIZE = 512        # [B]w
-QUEUE_SIZE = PACKET_SIZE * 50        # [B]
+PACKET_SIZE = 512        # [B]
+QUEUE_NUM = 10
+QUEUE_SIZE = PACKET_SIZE * QUEUE_NUM        # [B]
 CBR = [2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4]      # [Mbps]
-CBR = [2]      # [Mbps]
+# CBR = [2]      # [Mbps]
 PACKET_GENERATION_PER_MS_LIST = [int(a*1024*1024/(PACKET_SIZE*8)) for a in CBR]
 
 
@@ -35,7 +36,7 @@ PMPF_TH = 0.5/(LINK_CAPACITY/1000)
 
 
 # OURS
-NUM_ITERATION = 200   # [ms]
+NUM_ITERATION = 101   # [ms]
 
 QOR_TH = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.75, 0.85]
 QOR_TH_idx = 7           # 0~10

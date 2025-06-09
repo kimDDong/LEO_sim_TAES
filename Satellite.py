@@ -319,7 +319,10 @@ class Satellite:
         for pkt in self.sat_pkt_list:
             if pkt.state == 2 or pkt.state == -2:
                 if pkt.is_ack == False:
-                    pkt.state = 0
+                    if pkt.num_retx == 0:
+                        pkt.state = 10
+                    else:
+                        pkt.state = 0
                     if pkt.num_retx <= RETX_LIMIT:
                         # print("RETX")
                         self.sat_pkt_list.remove(pkt)
@@ -335,7 +338,10 @@ class Satellite:
                         self.sat_pkt_list.append(new_pkt)
                         self.enqueue_packet(new_pkt)  # ISL queue에 enqueue
                 else:
-                    pkt.state = 0
+                    if pkt.num_retx == 0:
+                        pkt.state = 10
+                    else:
+                        pkt.state = 0
                     if pkt.num_retx <= RETX_LIMIT:
                         # print("RETX")
                         self.sat_pkt_list.remove(pkt)
@@ -621,35 +627,135 @@ class Satellite:
         return total_propagation_delay
 
     def sending_packet(self):
-        for pkt_ms in range(PACKET_PER_MS):
+         for pkt_ms in range(PACKET_PER_MS):
             if len(self.queue_ISL[0]) != 0:
                 pkt = self.queue_ISL[0].pop(0)
-                next_hop = self.intra_ISL_list[0]
-                p_d = self.intra_ISL_p_d[0]
-                q_d = self.time - pkt.get_enqueue_time()
-                pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
-                self.sat_list[next_hop].receive_pkt(pkt, 1)
+
+                if pkt.timer <= 0:
+                    if pkt.state == 1:
+                        input("1")
+                        pkt.state = 2
+                    elif pkt.state == -1:
+                        pkt.state = -2
+                        input("2")
+                    # continue
+                if not (pkt.state == 2 or pkt.state == -2):
+
+                    if pkt.timer <= 0:
+                        print("id: ", pkt.id)
+                        print("state: ", pkt.state)
+                        print("is_ack: ", pkt.is_ack)
+                        print("path: ", pkt.path)
+                        print("cur: ", pkt.path[pkt.retx_cur])
+                        print("src: ", pkt.src)
+                        print("dst: ", pkt.dst)
+                        print("total_hop: ", pkt.total_hop)
+                        print("timer: ", pkt.timer)
+                        print("org_timer: ", pkt.org_timer)
+                        print("num_retx: ", pkt.num_retx)
+                        input("!!")
+
+                    next_hop = self.intra_ISL_list[0]
+                    p_d = self.intra_ISL_p_d[0]
+                    q_d = self.time - pkt.get_enqueue_time()
+                    pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
+                    self.sat_list[next_hop].receive_pkt(pkt, 1)
             if len(self.queue_ISL[1]) != 0:
                 pkt = self.queue_ISL[1].pop(0)
-                next_hop = self.intra_ISL_list[1]
-                p_d = self.intra_ISL_p_d[1]
-                q_d = self.time - pkt.get_enqueue_time()
-                pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
-                self.sat_list[next_hop].receive_pkt(pkt, 0)
+
+                if pkt.timer <= 0:
+                    if pkt.state == 1:
+                        pkt.state = 2
+                        input("3")
+                    elif pkt.state == -1:
+                        pkt.state = -2
+                        input("4")
+                    # continue
+                if not (pkt.state == 2 or pkt.state == -2):
+
+                    if pkt.timer <= 0:
+                        print("id: ", pkt.id)
+                        print("state: ", pkt.state)
+                        print("is_ack: ", pkt.is_ack)
+                        print("path: ", pkt.path)
+                        print("cur: ", pkt.path[pkt.retx_cur])
+                        print("src: ", pkt.src)
+                        print("dst: ", pkt.dst)
+                        print("total_hop: ", pkt.total_hop)
+                        print("timer: ", pkt.timer)
+                        print("org_timer: ", pkt.org_timer)
+                        print("num_retx: ", pkt.num_retx)
+                        input("!!")
+
+                    next_hop = self.intra_ISL_list[1]
+                    p_d = self.intra_ISL_p_d[1]
+                    q_d = self.time - pkt.get_enqueue_time()
+                    pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
+                    self.sat_list[next_hop].receive_pkt(pkt, 0)
             if len(self.queue_ISL[2]) != 0:
                 pkt = self.queue_ISL[2].pop(0)
-                next_hop = self.inter_ISL_list[0]
-                p_d = self.inter_ISL_p_d[0]
-                q_d = self.time - pkt.get_enqueue_time()
-                pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
-                self.sat_list[next_hop].receive_pkt(pkt, 3)
+
+                if pkt.timer <= 0:
+                    if pkt.state == 1:
+                        pkt.state = 2
+                        input("5")
+                    elif pkt.state == -1:
+                        pkt.state = -2
+                        input("6")
+                    # continue
+                if not (pkt.state == 2 or pkt.state == -2):
+
+                    if pkt.timer <= 0:
+                        print("id: ", pkt.id)
+                        print("state: ", pkt.state)
+                        print("is_ack: ", pkt.is_ack)
+                        print("path: ", pkt.path)
+                        print("cur: ", pkt.path[pkt.retx_cur])
+                        print("src: ", pkt.src)
+                        print("dst: ", pkt.dst)
+                        print("total_hop: ", pkt.total_hop)
+                        print("timer: ", pkt.timer)
+                        print("org_timer: ", pkt.org_timer)
+                        print("num_retx: ", pkt.num_retx)
+                        input("!!")
+
+                    next_hop = self.inter_ISL_list[0]
+                    p_d = self.inter_ISL_p_d[0]
+                    q_d = self.time - pkt.get_enqueue_time()
+                    pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
+                    self.sat_list[next_hop].receive_pkt(pkt, 3)
             if len(self.queue_ISL[3]) != 0:
                 pkt = self.queue_ISL[3].pop(0)
-                next_hop = self.inter_ISL_list[1]
-                p_d = self.inter_ISL_p_d[1]
-                q_d = self.time - pkt.get_enqueue_time()
-                pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
-                self.sat_list[next_hop].receive_pkt(pkt, 2)
+
+                if pkt.timer <= 0:
+                    if pkt.state == 1:
+                        pkt.state = 2
+                        input("7")
+                    elif pkt.state == -1:
+                        pkt.state = -2
+                        input("8")
+                    # continue
+                if not (pkt.state == 2 or pkt.state == -2):
+
+                    if pkt.timer <= 0:
+                        print("id: ", pkt.id)
+                        print("state: ", pkt.state)
+                        print("is_ack: ", pkt.is_ack)
+                        print("path: ", pkt.path)
+                        print("cur: ", pkt.path[pkt.retx_cur])
+                        print("src: ", pkt.src)
+                        print("dst: ", pkt.dst)
+                        print("total_hop: ", pkt.total_hop)
+                        print("timer: ", pkt.timer)
+                        print("org_timer: ", pkt.org_timer)
+                        print("num_retx: ", pkt.num_retx)
+                        input("!!")
+
+                    next_hop = self.inter_ISL_list[1]
+                    p_d = self.inter_ISL_p_d[1]
+                    q_d = self.time - pkt.get_enqueue_time()
+                    pkt.set_sending_next_hop(next_hop, self.time, p_d, q_d)
+                    self.sat_list[next_hop].receive_pkt(pkt, 2)
 
     def receive_pkt(self, pkt, isl):
         self.receive_queue[isl].append(pkt)
@@ -665,42 +771,58 @@ class Satellite:
                     elif pkt.state == -1:
                         pkt.state = -2
                     # continue
-                if pkt.is_ack == False:
-                # if pkt.state == 1:
-                    if pkt.dst == self.id:
-                        self.arrived_pkt_list.append(pkt)
-                        pkt.is_ack = True
-                        pkt.state = 3
-                        pkt.state = -1
-                        # tmp = pkt.src
-                        # pkt.src = pkt.dst
-                        # pkt.dst = tmp
-                        pkt.retx_cur = -1
-                        pkt.org_path = copy.deepcopy(pkt.path)
-                        # pkt.path.reverse()
-                        # #
-                        # print("id: ", pkt.id)
-                        # print("state: ", pkt.state)
-                        # print("is_ack: ", pkt.is_ack)
-                        # print("path: ", pkt.path)
-                        # print("org_path: ", pkt.org_path)
-                        # print("cur: ", pkt.path[pkt.retx_cur])
-                        # print("src: ", pkt.src)
-                        # print("dst: ", pkt.dst)
-                        # print("total_hop: ", pkt.total_hop)
-                        # print("timer: ", pkt.timer)
-                        # print("org_timer: ", pkt.org_timer)
-                        # print("num_retx: ", pkt.num_retx)
-                        # print("self.id: ", self.id)
-                        # input("!@!@@!@!@")
-                        self.enqueue_packet(pkt)
+                if not (pkt.state == 2 or pkt.state == -2):
+
+                    if pkt.timer <= 0:
+                        print("id: ", pkt.id)
+                        print("state: ", pkt.state)
+                        print("is_ack: ", pkt.is_ack)
+                        print("path: ", pkt.path)
+                        print("cur: ", pkt.path[pkt.retx_cur])
+                        print("src: ", pkt.src)
+                        print("dst: ", pkt.dst)
+                        print("total_hop: ", pkt.total_hop)
+                        print("timer: ", pkt.timer)
+                        print("org_timer: ", pkt.org_timer)
+                        print("num_retx: ", pkt.num_retx)
+                        input("!!")
+
+                    if pkt.is_ack == False:
+                    # if pkt.state == 1:
+                        if pkt.dst == self.id:
+                            self.arrived_pkt_list.append(pkt)
+                            pkt.is_ack = True
+                            pkt.state = 3
+                            pkt.state = -1
+                            # tmp = pkt.src
+                            # pkt.src = pkt.dst
+                            # pkt.dst = tmp
+                            pkt.retx_cur = -1
+                            pkt.org_path = copy.deepcopy(pkt.path)
+                            # pkt.path.reverse()
+                            # #
+                            # print("id: ", pkt.id)
+                            # print("state: ", pkt.state)
+                            # print("is_ack: ", pkt.is_ack)
+                            # print("path: ", pkt.path)
+                            # print("org_path: ", pkt.org_path)
+                            # print("cur: ", pkt.path[pkt.retx_cur])
+                            # print("src: ", pkt.src)
+                            # print("dst: ", pkt.dst)
+                            # print("total_hop: ", pkt.total_hop)
+                            # print("timer: ", pkt.timer)
+                            # print("org_timer: ", pkt.org_timer)
+                            # print("num_retx: ", pkt.num_retx)
+                            # print("self.id: ", self.id)
+                            # input("!@!@@!@!@")
+                            self.enqueue_packet(pkt)
+                        else:
+                            self.enqueue_packet(pkt)
                     else:
-                        self.enqueue_packet(pkt)
-                else:
-                    if pkt.src == self.id:
-                        pkt.state = -3
-                    else:
-                        self.enqueue_packet(pkt)
+                        if pkt.src == self.id:
+                            pkt.state = -3
+                        else:
+                            self.enqueue_packet(pkt)
 
     # def check_receive_pkt(self):
     #     for isl in range(4):
@@ -748,6 +870,7 @@ class Satellite:
     def time_tic(self):
         self.check_receive_pkt()
         self.sending_packet()
+        self.retransmit_packet()
         self.time += 1
 
         for i in [0, 1, 2, 3]:

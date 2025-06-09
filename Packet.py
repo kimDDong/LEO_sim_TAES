@@ -19,7 +19,7 @@ class Packet:
         self.drop_time = 0
 
         # self.state = 0      # alive: 0, drop: -1, retransmitted: -2, arrived: 1, arrivedACK: 2
-        self.state = 0      # alive: 1, drop: 2, arrived: 3, aliveACK: -1 dropACK: -2, arrivedACK: -3, retransmitted: 0
+        self.state = 11      # alive: 1, drop: 2, arrived: 3, aliveACK: -1 dropACK: -2, arrivedACK: -3, retransmitted: 0, 1st_retransmitted: 10, init: 11
         self.ttl = 0
 
         self.eta = 0
